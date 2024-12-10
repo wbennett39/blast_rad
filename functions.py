@@ -6,19 +6,17 @@ import numpy as np
 import math
 from scipy.special import expi
 import matplotlib.pyplot as plt
-from ..plots.plot_functions.show import show
+# from ..plots.plot_functions.show import show
 import numpy.polynomial as poly
 from functools import partial
 from scipy.special import roots_legendre
 import numpy.polynomial as poly
 import scipy.special as sps
-<<<<<<< HEAD
 import sys
-sys.path.append('/Users/bennett/Documents/Github/exactpack/')
-from exactpack.solvers.sedov.doebling import Sedov as SedovDoebling
+sys.path.append('/Users/wbennett/Documents/Github/ExactPack/')
+from exactpack.solvers.sedov import Sedov as SedovDoebling
 
-=======
->>>>>>> 0694f8dfbe8777457907db6e80f4dab1709b0059
+
 
 
 
@@ -470,9 +468,6 @@ def shaper(angles, spaces, M, thermal):
         return np.array([angles, spaces, M+1])
     
 @njit 
-<<<<<<< HEAD
-=======
-
 def eval_Tn(n,x):
     if n == 0:
         return  1 + x*0 
@@ -743,9 +738,7 @@ def rttwo_mistake_undoer(i,j):
             return 1.0
     else:
         assert(0)
-        
->>>>>>> 0694f8dfbe8777457907db6e80f4dab1709b0059
-
+@njit        
 def eval_Tn(n,x):
     if n == 0:
         return  1 + x*0 

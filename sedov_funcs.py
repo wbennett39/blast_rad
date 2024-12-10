@@ -4,12 +4,12 @@ import math
 from numba.experimental import jitclass
 from numba import types, typed
 from numba import int64, float64, jit, njit, deferred_type
-from .build_problem import build
-from .cubic_spline import cubic_spline_ob as cubic_spline
-from .functions import newtons
+# from build_problem import build
+from cubic_spline import cubic_spline_ob as cubic_spline
+from functions import newtons
 
-build_type = deferred_type()
-build_type.define(build.class_type.instance_type)
+# build_type = deferred_type()
+# build_type.define(build.class_type.instance_type)
 
 spline_type = deferred_type()
 spline_type.define(cubic_spline.class_type.instance_type)

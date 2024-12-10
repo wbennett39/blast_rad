@@ -5,7 +5,7 @@ from sedov_funcs import sedov_class
 from cubic_spline import cubic_spline_ob as cubic_spline
 
 from sedov_uncollided import sedov_uncollided_solutions
-from load_solution import load_sol
+# from load_solution import load_sol
 from functions import quadrature
 import numpy as np
 import math
