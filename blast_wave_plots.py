@@ -19,6 +19,19 @@ import quadpy
 sys.path.append('/Users/bennett/Documents/Github/exactpack/')
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 def opts0(*args, **kwargs): 
        return {'limit':50, 'epsabs':1.5e-12, 'epsrel':1.5e-12}
 
@@ -447,6 +460,47 @@ def error_TS_blast_wave_absorbing(N_space=16, M=6, x0 = 0.5, t0 = 15.0, sigma_t 
 
 
 
+def analytic_profile(tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 0.5, eblast = 1e20, plotnonrel = False, plotbad = False, relativistic = True, tstar = 1e-12, npts = 250):
+    g_interp, v_interp, sedov = TS_bench_prime(sigma_t, eblast, tstar)
+    
+    xs = np.linspace(-x0, x0, npts)
+    phi_bench = TS_bench(tf, xs, g_interp, v_interp, sedov, beta = beta, transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = relativistic)
+         
+    current = TS_current(tf, xs, g_interp, v_interp, sedov, beta = beta ,transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = relativistic)
+#  if plotbad == True:
+    plt.figure('scalar flux')
+    plt.plot(xs/sigma_t, phi_bench, 'k-', mfc = 'none')
+    if plotnonrel == True:
+         phi_bench_bad = TS_bench(tf, xs, g_interp, v_interp, sedov,beta = beta, transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False )
+         plt.plot(xs/sigma_t, phi_bench_bad, 'k--', mfc = 'none')
+    
+    elif plotbad == True:
+        phi_bench_nottransformed = TS_bench(tf, xs, g_interp, v_interp, sedov,beta = beta, transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False )
+        plt.plot(xs/sigma_t, phi_bench_nottransformed, 'k--', mfc = 'none')
+         
+    plt.ylabel(r'$\phi$', fontsize = 16)
+    plt.xlabel('x [cm]', fontsize = 16)
+    show(f'analytic_phi_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}')
+    plt.show()
+    plt.close()
+
+    plt.figure('current')
+    plt.plot(xs/sigma_t, current, 'k-', mfc = 'none')
+    if plotnonrel == True:
+         current_bad = TS_current(tf, xs, g_interp, v_interp, sedov, beta = beta ,transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False)
+         plt.plot(xs/sigma_t, current_bad, 'k--', mfc = 'none')
+    
+    elif plotbad == True:
+        current_nottransformed = TS_current(tf, xs, g_interp, v_interp, sedov, beta = beta, transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False)
+        plt.plot(xs/sigma_t, current_nottransformed, 'k--', mfc = 'none')
+         
+    plt.ylabel(r'$J$', fontsize = 16)
+    plt.xlabel('x [cm]', fontsize = 16)
+    show(f'analytic_J_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}')
+    plt.show()
+    plt.close()
+
+
 
 
 def TS_blast_absorbing_profiles(tf = 5.5, N_space = 16, cc = 0.0, uncollided = False, transform = True, moving = True, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, eblast = 1e20, plotcurrent = False, plotbad = False, relativistic = False, tstar = 1e-12):
@@ -459,7 +513,7 @@ def TS_blast_absorbing_profiles(tf = 5.5, N_space = 16, cc = 0.0, uncollided = F
     # fulltlist = np.array([0.05,0.5, 0.6, 0.7,  1.0, 1.5, 2.0, 2.5, 2.5, 2.6,  3.0, 3.5,  4.0, 4.5,  5.0])
     # fulltlist = np.array([0.0005, 0.005, 0.01,0.02,0.03,0.04, 0.05, 0.06,0.07,0.08,0.09, 0.1,0.12,0.13,0.14,0.15,0.16, 0.17, 0.18, 0.19, 0.2, 0.21,0.22,0.23,0.24, 0.25,0.26,0.27,0.28,0.29, 0.3,0.31,0.32,0.33,0.34, 0.35,0.36,0.37,0.38,0.39, 0.4,0.41,0.42,0.43,0.44,0.45,0.46,0.47,0.48,0.49, 0.5, 0.55, 0.6, 0.65,  0.7,0.75,0.8,0.9, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0])
     fulltlist = np.linspace(0.00001, tf, 150)
-    loader = load_sol('transport', 'plane_IC', 'transport', s2 = False, file_name = 'run_data.hdf5', c = cc)
+    # loader = load_sol('transport', 'plane_IC', 'transport', s2 = False, file_name = 'run_data.hdf5', c = cc)
     # tlist1 = np.array([0.05, 0.4, 0.7, 1.0, 2.5])
     # tlist1 = np.array([0.0005, 0.005, 0.01,0.02,0.03,0.04, 0.05, 0.06,0.07,0.08,0.09, 0.1, 0.12,0.13,0.14,0.15,0.16, 0.17, 0.18, 0.19, 0.2, 0.21,0.22,0.23,0.24, 0.25,0.26,0.27,0.28,0.29, 0.3,0.31,0.32,0.33,0.34, 0.35,0.36,0.37,0.38,0.39, 0.4,0.41,0.42,0.43,0.44,0.45,0.46,0.47,0.48,0.49, 0.5])
     tlist1 = np.array([0.01, 0.1, 0.3, 0.4, 0.49999])
