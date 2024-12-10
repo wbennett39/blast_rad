@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
-from moving_mesh_transport.plots.plot_functions.show import show
-from moving_mesh_transport.solver_classes.functions import get_sedov_funcs
-from moving_mesh_transport.solver_classes.sedov_funcs import sedov_class
-from moving_mesh_transport.solver_classes.cubic_spline import cubic_spline_ob as cubic_spline
+from show import show
+from functions import get_sedov_funcs
+from sedov_funcs import sedov_class
+from cubic_spline import cubic_spline_ob as cubic_spline
 
-from moving_mesh_transport.solver_classes.sedov_uncollided import sedov_uncollided_solutions
-from moving_mesh_transport.loading_and_saving.load_solution import load_sol
-from moving_mesh_transport.solver_classes.functions import quadrature
+from sedov_uncollided import sedov_uncollided_solutions
+from load_solution import load_sol
+from functions import quadrature
 import numpy as np
 import math
 from scipy.special import erf
