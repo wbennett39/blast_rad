@@ -462,6 +462,7 @@ def error_TS_blast_wave_absorbing(N_space=16, M=6, x0 = 0.5, t0 = 15.0, sigma_t 
 
 def analytic_profile(tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 0.5, eblast = 1e20, plotnonrel = False, plotbad = False, relativistic = True, tstar = 1e-12, npts = 250):
     g_interp, v_interp, sedov = TS_bench_prime(sigma_t, eblast, tstar)
+    plt.ion()
     
     xs = np.linspace(-x0, x0, npts)
     phi_bench = TS_bench(tf, xs, g_interp, v_interp, sedov, beta = beta, transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = relativistic)
@@ -480,7 +481,9 @@ def analytic_profile(tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 0.5, 
          
     plt.ylabel(r'$\phi$', fontsize = 16)
     plt.xlabel('x [cm]', fontsize = 16)
+    plt.ylim(0, 1.1)
     show(f'analytic_phi_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}')
+    
     plt.show()
     plt.close()
 
@@ -496,7 +499,9 @@ def analytic_profile(tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 0.5, 
          
     plt.ylabel(r'$J$', fontsize = 16)
     plt.xlabel('x [cm]', fontsize = 16)
+    plt.ylim(0, 0.6)
     show(f'analytic_J_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}')
+    
     plt.show()
     plt.close()
 
