@@ -1901,7 +1901,7 @@ def analytic_paper_plots():
     plt.close()
     plt.close()
     plt.close()
-    TS_blast_absorbing_profiles(beta = 3.2, eblast = 1.8e14, tstar = 150.0, tf = 2.0, plotcurrent= True)
+    TS_blast_absorbing_profiles(beta = 3.2, eblast = 1.8e14, tstar = 150.0, tf = 2.0, plotcurrent= True, analytic_contact=False)
     plt.figure(1)
     plt.text(9.6, .342,f't = {tlist1[-1]} [ns]' )
     plt.text(22.3, .183, f'{tlist1[-2]}' )
