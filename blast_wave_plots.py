@@ -787,13 +787,13 @@ def TS_blast_absorbing_profiles(tf = 5.5, N_space = 16, cc = 0.0, uncollided = F
     current = tlistdense * 0
     current_nottransformed = tlistdense * 0
     for it, tt in enumerate(tlistdense):
-         t_bench_right[it] = TS_bench(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic=True, x0 = x0)
-         t_bench_right_nottransformed[it] = TS_bench(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic=False, transform=False, x0 = x0)
-         t_bench_right_bad[it] = TS_bench(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic = False, x0 = x0)
-         current[it] = TS_current(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic=True, x0 = x0)
-         current_bad[it] = TS_current(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic= False, x0 = x0)
+         t_bench_right[it] = TS_bench(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic=True, x0 = x0, analytic_contact=analytic_contact)
+         t_bench_right_nottransformed[it] = TS_bench(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic=False, transform=False, x0 = x0,analytic_contact=analytic_contact)
+         t_bench_right_bad[it] = TS_bench(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic = False, x0 = x0,analytic_contact=analytic_contact)
+         current[it] = TS_current(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic=True, x0 = x0,analytic_contact=analytic_contact)
+         current_bad[it] = TS_current(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic= False, x0 = x0,analytic_contact=analytic_contact)
 
-         current_nottransformed[it] = TS_current(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic=False, transform=False, x0 = x0)
+         current_nottransformed[it] = TS_current(tt, np.array([x0]), g_interp, v_interp, sedov, beta = beta, relativistic=False, transform=False, x0 = x0,analytic_contact=analytic_contact)
 
     plt.figure(33)       
     plt.plot(tlistdense/sigma_t/29.98, t_bench_right, 'k-')  
@@ -1684,7 +1684,32 @@ def new_bench(x, t, mu, sedov, integral, x0 = .15, sigma_t = 0.001, beta = 3.5):
 
      
 
+def x_vs_t():
+    # tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 0.5, eblast = 1e20, plotnonrel = False, plotbad = False, relativistic = True, tstar = 1e-12, npts = 250)
+    sigma_t = 1e-3
+    g_interp, v_interp, sedov = TS_bench_prime(eblast = 1e20)
+    f_fun, g_fun, l_fun = get_sedov_funcs()
+    sedov = sedov_class(g_fun, f_fun, l_fun, sigma_t)
+    tpts = 1000
+    x0 = 0.15
+    mumu = 1
+    xx = 0.05
+    tt = 0.0
+    tf = 1.2
+    r2_position = np.zeros(tpts)
+    wave_position = np.zeros(tpts)
+    tlist = np.linspace(0.001, tf, tpts)
+    for it, tt in enumerate(tlist):
+         sedov.physical(tt)
+         r2_position[it] = sedov.r2_dim
+         wave_position[it] = -x0 + tt
 
+    plt.plot(r2_position/sigma_t, tlist, 'k:')
+    plt.plot( -r2_position/sigma_t, tlist,'k:')
+    plt.plot(wave_position/sigma_t, tlist, 'k-')
+    plt.xlim(-x0/sigma_t,x0/sigma_t)
+    plt.show()
+    
 
 def chi_x_vs_t():
     sigma_t = 1e-3
