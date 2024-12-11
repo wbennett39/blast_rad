@@ -349,7 +349,8 @@ class sedov_class(object):
         # x0 = self.x0
         v = 29.98
         # c1 = (self.eblast/(self.alpha*self.rho0))**(1.0/3) * (v * sigma_t * 1e-9)**(-2/3) * sigma_t
-        tau = t * 10**-9 /v/sigma_t
+
+        tau = t * 10**-9 /v/sigma_t + self.tstar
         c1 =  (self.eblast/(self.alpha*self.rho0))**(1.0/3)* (10**-9 /v/sigma_t)**(2/3) * sigma_t
 
         eta = (c1/mu + (2**0.3333333333333333*c1**2)/(mu*(2*c1**3 + 27*mu**2*x0 + 3*math.sqrt(3)*math.sqrt(4*c1**3*mu**2*x0 + 27*mu**4*x0**2))**0.3333333333333333) + (2*c1**3 + 27*mu**2*x0 + 3*math.sqrt(3)*math.sqrt(4*c1**3*mu**2*x0 + 27*mu**4*x0**2))**0.3333333333333333/(2**0.3333333333333333*mu))/3.
@@ -367,4 +368,5 @@ class sedov_class(object):
 
 
         # r2a =  (2*2**0.3333333333333333*c1**6 + mu**4*((4*c1**9)/mu**6 + (36*c1**6*(mu*t - x0))/mu**4 +  6*math.sqrt(3)*math.sqrt((c1**6*(4*c1**3 + 27*mu**2*(mu*t - x0))*(mu*t - x0)**3)/mu**6) + (54*c1**3*(-(mu*t) + x0)**2)/mu**2)**0.6666666666666666 + 2*c1**3*mu**2*(6*2**0.3333333333333333*mu*t - 6*2**0.3333333333333333*x0 + ((2*c1**9)/mu**6 + (18*c1**6*(mu*t - x0))/mu**4 +  3*math.sqrt(3)*math.sqrt((c1**6*(4*c1**3 + 27*mu**2*(mu*t - x0))*(mu*t - x0)**3)/mu**6) + (27*c1**3*(-(mu*t) + x0)**2)/mu**2)**0.3333333333333333))/ (6.*mu**4*((2*c1**9)/mu**6 + (18*c1**6*(mu*t - x0))/mu**4 + 3*math.sqrt(3)*math.sqrt((c1**6*(4*c1**3 + 27*mu**2*(mu*t - x0))*(mu*t - x0)**3)/mu**6) + (27*c1**3*(-(mu*t) + x0)**2)/mu**2)**0.3333333333333333)
+
         return r2a, r2b

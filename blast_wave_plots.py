@@ -508,7 +508,7 @@ def analytic_profile(tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 0.5, 
 
 
 
-def TS_blast_absorbing_profiles(tf = 5.5, N_space = 16, cc = 0.0, uncollided = False, transform = True, moving = True, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, eblast = 1e20, plotcurrent = False, plotbad = False, relativistic = False, tstar = 1e-12):
+def TS_blast_absorbing_profiles(tf = 5.5, N_space = 16, cc = 0.0, uncollided = False, transform = True, moving = True, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, eblast = 1.8e18, plotcurrent = False, plotbad = False, relativistic = False, tstar = 1e-12, analytic_contact = True):
     M = 6
     npts = 250
     # x0 = 0.15
@@ -558,15 +558,15 @@ def TS_blast_absorbing_profiles(tf = 5.5, N_space = 16, cc = 0.0, uncollided = F
         #  output_phi = loader.exit_phi
         #  xs = np.linspace(-x0, x0, 200)
     
-         phi_bench = TS_bench(tt, xs, g_interp, v_interp, sedov, beta = beta, transform=transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = True)
+         phi_bench = TS_bench(tt, xs, g_interp, v_interp, sedov, beta = beta, transform=transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = True, analytic_contact = analytic_contact)
          
-         current = TS_current(tt, xs, g_interp, v_interp, sedov, beta = beta ,transform=transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = True)
-         current_bad = TS_current(tt, xs, g_interp, v_interp, sedov, beta = beta ,transform=transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False)
-         current_nottransformed = TS_current(tt, xs, g_interp, v_interp, sedov, beta = beta ,transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False)
+         current = TS_current(tt, xs, g_interp, v_interp, sedov, beta = beta ,transform=transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = True,  analytic_contact = analytic_contact)
+         current_bad = TS_current(tt, xs, g_interp, v_interp, sedov, beta = beta ,transform=transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False,  analytic_contact = analytic_contact)
+         current_nottransformed = TS_current(tt, xs, g_interp, v_interp, sedov, beta = beta ,transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False,  analytic_contact = analytic_contact)
 
         #  if plotbad == True:
-         phi_bench_bad = TS_bench(tt, xs, g_interp, v_interp, sedov,beta = beta, transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False )
-         phi_bench_nottransformed = TS_bench(tt, xs, g_interp, v_interp, sedov,beta = beta, transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False )
+         phi_bench_bad = TS_bench(tt, xs, g_interp, v_interp, sedov,beta = beta, transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False , analytic_contact = analytic_contact)
+         phi_bench_nottransformed = TS_bench(tt, xs, g_interp, v_interp, sedov,beta = beta, transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False, analytic_contact = analytic_contact )
               
         
 
@@ -671,14 +671,14 @@ def TS_blast_absorbing_profiles(tf = 5.5, N_space = 16, cc = 0.0, uncollided = F
             # output_phi = loader.exit_phi
             # N_ang = loader.psi[:,0].size 
             #  xs = np.linspace(-x0, x0, 200)
-            phi_bench = TS_bench(tt, xs, g_interp, v_interp, sedov, beta = beta, transform = transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = True)
-            current = TS_current(tt, xs, g_interp, v_interp, sedov, beta= beta, transform=transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = True)
-            current_bad = TS_current(tt, xs, g_interp, v_interp, sedov, beta= beta, transform=transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False)
-            current_nottransformed = TS_current(tt, xs, g_interp, v_interp, sedov, beta= beta, transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False)
+            phi_bench = TS_bench(tt, xs, g_interp, v_interp, sedov, beta = beta, transform = transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = True, analytic_contact = analytic_contact)
+            current = TS_current(tt, xs, g_interp, v_interp, sedov, beta= beta, transform=transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = True, analytic_contact = analytic_contact)
+            current_bad = TS_current(tt, xs, g_interp, v_interp, sedov, beta= beta, transform=transform, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False, analytic_contact = analytic_contact)
+            current_nottransformed = TS_current(tt, xs, g_interp, v_interp, sedov, beta= beta, transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False, analytic_contact = analytic_contact)
             # if plotbad == True:
-            phi_bench_bad = TS_bench(tt, xs, g_interp, v_interp, sedov, beta = beta,transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False)
+            phi_bench_bad = TS_bench(tt, xs, g_interp, v_interp, sedov, beta = beta,transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False, analytic_contact = analytic_contact)
 
-            phi_bench_nottransformed = TS_bench(tt, xs, g_interp, v_interp, sedov,beta = beta, transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False )
+            phi_bench_nottransformed = TS_bench(tt, xs, g_interp, v_interp, sedov,beta = beta, transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False, analytic_contact = analytic_contact )
               
             # RMSE_list[it + it2] = RMSETS(phi_bench, phi) #/ np.average(phi_bench)
             # plt.figure(1101)
@@ -999,7 +999,7 @@ def TS_psi(t, xs, mu, interp_g_fun, interp_v_fun, sedov, sigma_t = 1e-3, t0 = 0.
     psi = sedov_uncol.uncollided_angular_flux(xs, t, mu, sedov_class, interp_g_fun, interp_v_fun)[0]
     return psi
      
-def TS_bench(t, xs, interp_g_fun, interp_v_fun, sedov, beta = 3.5, sigma_t = 1e-3, t0 = 0.5, x0 = 0.15, transform = True, relativistic = False):
+def TS_bench(t, xs, interp_g_fun, interp_v_fun, sedov, beta = 3.5, sigma_t = 1e-3, t0 = 0.5, x0 = 0.15, transform = True, relativistic = False, analytic_contact = True):
 
     xs_quad, ws_quad = quadrature(20, 'gauss_legendre')
     # mu_quad, mu_ws = quadrature(200, 'gauss_legendre')
@@ -1008,13 +1008,13 @@ def TS_bench(t, xs, interp_g_fun, interp_v_fun, sedov, beta = 3.5, sigma_t = 1e-
     mu_ws = res1.weights
     
     
-    sedov_uncol = sedov_uncollided_solutions(xs_quad, ws_quad, mu_quad, mu_ws, x0, sigma_t, t0, transform, lambda_1 = beta, relativistic= relativistic)
+    sedov_uncol = sedov_uncollided_solutions(xs_quad, ws_quad, mu_quad, mu_ws, x0, sigma_t, t0, transform, lambda_1 = beta, relativistic= relativistic, analytic_contact=analytic_contact)
 
     phi = sedov_uncol.uncollided_scalar_flux(xs, t, sedov, interp_g_fun, interp_v_fun)
     
     return phi
 
-def TS_current(t, xs, interp_g_fun, interp_v_fun, sedov, sigma_t = 1e-3, t0 = 0.5, x0 = 0.15, beta = 3.5, transform = True, relativistic = False):
+def TS_current(t, xs, interp_g_fun, interp_v_fun, sedov, sigma_t = 1e-3, t0 = 0.5, x0 = 0.15, beta = 3.5, transform = True, relativistic = False, analytic_contact = True):
 
     xs_quad, ws_quad = quadrature(20, 'gauss_legendre')
     # mu_quad, mu_ws = quadrature(200, 'gauss_legendre')
@@ -1023,7 +1023,7 @@ def TS_current(t, xs, interp_g_fun, interp_v_fun, sedov, sigma_t = 1e-3, t0 = 0.
     mu_ws = res1.weights
     
     
-    sedov_uncol = sedov_uncollided_solutions(xs_quad, ws_quad, mu_quad, mu_ws, x0, sigma_t, t0, transform, lambda_1 = beta, relativistic= relativistic)
+    sedov_uncol = sedov_uncollided_solutions(xs_quad, ws_quad, mu_quad, mu_ws, x0, sigma_t, t0, transform, lambda_1 = beta, relativistic= relativistic, analytic_contact=analytic_contact)
 
     J = sedov_uncol.current(xs, t, sedov, interp_g_fun, interp_v_fun)
     
@@ -1879,7 +1879,7 @@ def analytic_paper_plots():
     # low energy 
     tlist1 = np.round(np.array([0.01, 0.1, 0.3, 0.5]) * xt, 1)
     tlist2 = np.round(np.array([0.5, 0.7,0.9, 1.5]) * xt, 1)
-    TS_blast_absorbing_profiles(beta = 3.2, eblast = 1.8e14, tstar = 150.0, tf = 2.0)
+    TS_blast_absorbing_profiles(beta = 3.2, eblast = 1.8e14, tstar = 150.0, tf = 2.0, analytic_contact = False)
     plt.figure(1)
     plt.text(9.6, .542,f't = {tlist1[-1]} [ns]' )
     plt.text(22.3, .223, f'{tlist1[-2]}' )
@@ -1929,7 +1929,7 @@ def analytic_paper_plots():
     tlist2 = np.round(np.array([0.5, 0.7,0.9, 1.5]) * xt, 1)
     plt.figure(1)
     plt.text(6.2, .465,f't = {tlist1[-1]} [ns]' )
-    plt.text(-42, .534, f'{tlist1[-2]}' )
+    plt.text(-42, .55, f'{tlist1[-2]}' )
     plt.text(-76, .254 , f'{tlist1[-3]}')
     plt.text(-141, .256, f'{tlist1[-4]}' )
     plt.savefig('blast_plots/mid_energy_scalar_flux_before.pdf')
@@ -1937,8 +1937,8 @@ def analytic_paper_plots():
     plt.figure(2)
     plt.text(-42.8, .68,f't = {tlist2[0]} [ns]' )
     plt.text(-61, .3,f'{tlist2[1]}' )
-    plt.text(-16.3, .11,f'{tlist2[2]}' )
-    plt.text(-58.5, .012,f'{tlist2[3]}' )
+    plt.text(-16.3, .15,f'{tlist2[2]}' )
+    plt.text(-58.5, .02,f'{tlist2[3]}' )
     plt.savefig('blast_plots/mid_energy_scalar_flux_after.pdf')
     plt.close()
     plt.close()
@@ -1959,7 +1959,7 @@ def analytic_paper_plots():
     plt.savefig('blast_plots/mid_energy_current_before.pdf')
     plt.figure(2)
     plt.text(-42.8, .411,f't = {tlist2[0]} [ns]' )
-    plt.text(-61, .13,f'{tlist2[1]}' )
+    plt.text(-61, .12,f'{tlist2[1]}' )
     plt.text(-16.3, .037,f'{tlist2[2]}' )
     plt.text(113.8, .007,f'{tlist2[3]}' )
     plt.savefig('blast_plots/mid_energy_current_after.pdf')

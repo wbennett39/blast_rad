@@ -27,12 +27,13 @@ data = [('x0', float64),
         ('mu_quad', float64[:]),
         ('mu_ws', float64[:]),
         ('transform', float64),
-        ('relativistic', int64)
+        ('relativistic', int64),
+        ('analytic_contact', int64 )
         ]
 
 @jitclass(data)
 class sedov_uncollided_solutions(object):
-    def __init__(self, xs_quad, ws_quad, mu_quad, mu_ws, x0, sigma_a, t0, transform = True, lambda_1 = 3.5, relativistic = True):
+    def __init__(self, xs_quad, ws_quad, mu_quad, mu_ws, x0, sigma_a, t0, transform = True, lambda_1 = 3.5, relativistic = True, analytic_contact = True):
         self.xs_quad = xs_quad
         self.ws_quad = ws_quad
         self.x0 = x0
@@ -47,6 +48,7 @@ class sedov_uncollided_solutions(object):
         self.mu_ws = mu_ws
         self.transform = transform
         self.relativistic = relativistic
+        self.analytic_contact = analytic_contact
 
     
     # def get_sedov_density(self, rho_interp, v_interp, xs, sedov_class):
@@ -121,7 +123,7 @@ class sedov_uncollided_solutions(object):
         lower_bound = -self.x0
         
         if self.transform == True:
-            # integral_bound1, integral_bound2 = sedov_class.find_r2_in_transformed_space(x, t, mu, self.x0)
+            # 
             testr2a, testr2b = sedov_class.analytic_contact_func(mu, t, self.x0, self.sigma_a)
             # print(testr2a,integral_bound1)
             v = 29.98
@@ -146,18 +148,23 @@ class sedov_uncollided_solutions(object):
             # print(r2btest - integral_bound2)
             integral_bound1 = r2atest
             integral_bound2 = r2btest
+            if self.analytic_contact == False:
+                integral_bound1, integral_bound2 = sedov_class.find_r2_in_transformed_space(x, t, mu, self.x0)
+
             # print(approx_test-integral_bound1)
             
         else:
             sedov_class.physical(t)
             integral_bound1 = -sedov_class.r2 * self.sigma_a
-            integral_bound1 = sedov_class.r2 * self.sigma_a
+            integral_bound2 = sedov_class.r2 * self.sigma_a
             # print(integral_bound1 -sedov_class.find_r2_in_transformed_space(x, t, mu, self.x0)[0] )
 
             # sedov_class.physical(t)
             # integral_bound1 = -sedov_class.r2 * self.sigma_a
             # integral_bound2 = -sedov_class.r2 * self.sigma_a
-            integral_bound1, integral_bound2 = sedov_class.find_r2_in_transformed_space(x, t, mu, self.x0)
+
+
+            # integral_bound1, integral_bound2 = sedov_class.find_r2_in_transformed_space(x, t, mu, self.x0)
         # # upper_bound = self.get_upper_integral_bounds(x, mu, t, sedov_class, v_interpolated)
         upper_bound = x
         res = 0.0
