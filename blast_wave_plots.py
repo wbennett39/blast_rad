@@ -1686,28 +1686,52 @@ def new_bench(x, t, mu, sedov, integral, x0 = .15, sigma_t = 0.001, beta = 3.5):
 
 def x_vs_t():
     # tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 0.5, eblast = 1e20, plotnonrel = False, plotbad = False, relativistic = True, tstar = 1e-12, npts = 250)
+
     sigma_t = 1e-3
-    g_interp, v_interp, sedov = TS_bench_prime(eblast = 1e20)
-    f_fun, g_fun, l_fun = get_sedov_funcs()
-    sedov = sedov_class(g_fun, f_fun, l_fun, sigma_t)
+    g_interp, v_interp, sedov = TS_bench_prime(sigma_t = 1e-3, eblast = 1e27, tstar = 1e-12)
+    # f_fun, g_fun, l_fun = get_sedov_funcs()
+    # sedov = sedov_class(g_fun, f_fun, l_fun, sigma_t)
     tpts = 1000
     x0 = 0.15
     mumu = 1
     xx = 0.05
     tt = 0.0
     tf = 1.2
+    t0 = 1
     r2_position = np.zeros(tpts)
     wave_position = np.zeros(tpts)
+    unsupported = np.zeros(tpts)
     tlist = np.linspace(0.001, tf, tpts)
+    xs = np.linspace(-x0,x0)
     for it, tt in enumerate(tlist):
          sedov.physical(tt)
          r2_position[it] = sedov.r2_dim
          wave_position[it] = -x0 + tt
+         unsupported[it] = -x0 + tt-t0 
 
-    plt.plot(r2_position/sigma_t, tlist, 'k:')
-    plt.plot( -r2_position/sigma_t, tlist,'k:')
-    plt.plot(wave_position/sigma_t, tlist, 'k-')
+    tlistplot = tlist * 1/29.98/sigma_t
+    plt.plot(r2_position/sigma_t, tlistplot, 'k-.', label = 'shock')
+    plt.plot(-r2_position/sigma_t, tlistplot,'k-.')
+    plt.plot(wave_position/sigma_t, tlistplot, 'k-', label = 'radiation wavefront')
+    plt.plot(unsupported/sigma_t, tlistplot, 'k--', label = 'unsupported wavefront')
+    plt.plot(xs/sigma_t, np.ones(xs.size) * 0.1 *1/29.98/sigma_t, ':', c = 'gray')
+    plt.plot(xs/sigma_t, np.ones(xs.size) * 0.16* 1/29.98/sigma_t, ':', c = 'gray')
+    plt.plot(xs/sigma_t, np.ones(xs.size) * 0.22* 1/29.98/sigma_t, ':', c = 'gray')
+    plt.plot(xs/sigma_t, np.ones(xs.size) * 1* 1/29.98/sigma_t, ':', c = 'gray')
+    plt.plot(xs/sigma_t, np.ones(xs.size) * 1.05* 1/29.98/sigma_t, ':', c = 'gray')
+    plt.plot(xs/sigma_t, np.ones(xs.size) * 1.15*1/29.98/sigma_t, ':', c = 'gray')
+    plt.text(-125, 0.1 *1/29.98/sigma_t, 'a' )
+    plt.text(-125, 0.16 *1/29.98/sigma_t, 'b' )
+    plt.text(-125, 0.22 *1/29.98/sigma_t, 'c' )
+
+    plt.text(-125, 1 *1/29.98/sigma_t, 'd' )
+    plt.text(-125, 1.05 *1/29.98/sigma_t, 'e' )
+    plt.text(-125, 1.15 *1/29.98/sigma_t, 'f' )
     plt.xlim(-x0/sigma_t,x0/sigma_t)
+    plt.xlabel('x [cm]', fontsize = 16)
+    plt.ylabel('t [ns]', fontsize = 16)
+    plt.legend()
+    show('x_vs_t')
     plt.show()
     
 
