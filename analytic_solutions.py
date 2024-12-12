@@ -97,6 +97,7 @@ def analytic_detector_lambda(t, x0, mu, E0, beta, sedov_class, omega, sigma_t = 
 
 
 def check_lambda(t=2, x0=0.15, E0=1e20, beta = 2.6, sigma_t = 1e-3):
+    plt.ion()
     omega = integrate_sedov_selfsim(beta = beta, sigma_t=sigma_t, x0=x0)
     mulist = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
     
@@ -120,7 +121,6 @@ def check_lambda(t=2, x0=0.15, E0=1e20, beta = 2.6, sigma_t = 1e-3):
             lambdalistanalytic[im] = analytic_detector_lambda(t, x0, mu, E0, beta, sedov, omega)
         
             lambdalist[im] = sedov_uncol.integrate_sigma(x0, mu, t, sedov, interp_g_fun, interp_v_fun)
-            print(lambdalist[im]/lambdalistanalytic[im])
     
     plt.plot(mulist, lambdalistanalytic, 'b-o')
     plt.plot(mulist, lambdalist, 'k:')

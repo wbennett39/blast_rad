@@ -46,17 +46,15 @@ def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
         kappa = 2
         rho0 = 0.0001
         rho2 = 0.006
+        t = tfinal
         # beta = c1 * (v0-1) - v0 * (x0/mu + t0)
         
         # b2 =  v0 * (-x0/mu - t0 + c1) / (1+v0/mu)
-        b2 = ((v0*x0) - t0*v0*mu)/(v0 + mu)
-        b1 = max(x, b2)
-        # b2 = 0
+        xfr = (mu * t * v0 + v0 * x)/(v0 - mu)
+        xfl = (mu * t * v0 + v0 * x)/(v0 + mu)
 
-        b4 = x0
-        # b3 = min(x,0)
 
-        b3 =  min(x, b2)
+       
 
         # print(b1, b2, b3, b4, 'bs', x, 'x', t0, 't0')
 
@@ -66,7 +64,8 @@ def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
         t1 = lambda s: rho2 * s
         t2 = lambda s: rho0 * s
 
-        mfp = t1(b1) - t1(b2) + t2(b3) - t2(b4)
+
+        mfp = t2(min(x, xfl)) - t2(x0) + t2(max(x, xfr)) - t2(xfr) - t1(xfl) + t1(min(xfr, max(x, xfl)))
         if mu == 0:
              return 0.0
         else:
