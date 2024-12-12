@@ -35,6 +35,85 @@ sys.path.append('/Users/bennett/Documents/Github/exactpack/')
 def opts0(*args, **kwargs): 
        return {'limit':50, 'epsabs':1.5e-12, 'epsrel':1.5e-12}
 
+def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
+        c1 = 1.0
+        if mu!= 0:
+            t0 =  (x0-x)/mu + tfinal # time the particle is emitted
+        else: 
+             t0 = np.inf
+        x02 = 0.0
+        sqrt_pi = math.sqrt(math.pi)
+        kappa = 2
+        rho0 = 0.0001
+        rho2 = 0.006
+        # beta = c1 * (v0-1) - v0 * (x0/mu + t0)
+        
+        # b2 =  v0 * (-x0/mu - t0 + c1) / (1+v0/mu)
+        b2 = ((v0*x0) - t0*v0*mu)/(v0 + mu)
+        b1 = max(x, b2)
+        # b2 = 0
+
+        b4 = x0
+        # b3 = min(x,0)
+
+        b3 =  min(x, b2)
+
+        # print(b1, b2, b3, b4, 'bs', x, 'x', t0, 't0')
+
+        # t1 = lambda s: -0.5*(mu*sqrt_pi*kappa*erf((beta - (s*(mu + v0))/mu)/kappa))/(mu + v0)
+
+        # t1 = lambda s: (sqrt_pi*kappa*mu*erf((v0*(s - x0) + (c1 + s + t0*v0)*mu)/(kappa*mu + 1e-12)))/(1e-12 + 2.*(v0 + mu))
+        t1 = lambda s: rho2 * s
+        t2 = lambda s: rho0 * s
+
+        mfp = t1(b1) - t1(b2) + t2(b3) - t2(b4)
+        if mu == 0:
+             return 0.0
+        else:
+            if mfp/mu >40:
+                mfp = 40 * mu
+                # print(np.exp(-mfp/mu))
+                return 0.0
+                # mfp = rho0 * x - rho0 * (-x0)
+                # print(mfp, x, 'mfp')
+            if np.isnan(np.exp(-mfp / mu) * np.heaviside(mu - abs(x - x0)/ (tfinal), 0) * np.heaviside(abs(x0-x) - (tfinal-t0source)*mu,0)):
+                    print(np.exp(-mfp / mu))
+                    print(mu)
+                    assert(0)
+
+            if mu > 0:
+                return np.exp(-mfp / mu) * np.heaviside(mu - abs(x - x0)/ (tfinal), 0) * np.heaviside(abs(x0-x) - (tfinal-t0source)*mu,0)
+            else:
+                    return 0.0
+            
+
+def square_blast_phi_vector(tfinal, xs, v0, t0, x0):
+     res = xs*0
+     for ix, x in enumerate(xs):
+        aa = 0.0
+        bb = 1.0
+        if tfinal > t0:
+            bb = min(1.0, abs(x-x0)/ (tfinal - t0))
+        aa = abs(x-x0) / tfinal
+
+        if aa <= 1.0:     
+            res[ix] = integrate.nquad(square_blast_psi, [[aa, bb]], args = (tfinal, x, v0, t0, x0), opts = [opts0])[0]
+     return res
+     
+def plot_square_blast(t, x0 = -150, v0 = 0.01, t0source = 100, npts = 250):
+     plt.ion()
+     xs = np.linspace(-x0,x0, npts)
+     phi = square_blast_phi_vector(t, xs, v0, t0source, x0)
+     plt.plot(xs, phi, 'k-')
+     plt.show()
+     
+     
+
+
+
+
+
+
 def toy_blast_psi(mu, tfinal, x, v0, t0source, x0):
         c1 = 1.0
         x0 = -5 
@@ -1688,7 +1767,7 @@ def x_vs_t():
     # tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 0.5, eblast = 1e20, plotnonrel = False, plotbad = False, relativistic = True, tstar = 1e-12, npts = 250)
 
     sigma_t = 1e-3
-    g_interp, v_interp, sedov = TS_bench_prime(sigma_t = 1e-3, eblast = 1e27, tstar = 1e-12)
+    g_interp, v_interp, sedov = TS_bench_prime(sigma_t = 1e-3, eblast = 1e20, tstar = 1e-12)
     # f_fun, g_fun, l_fun = get_sedov_funcs()
     # sedov = sedov_class(g_fun, f_fun, l_fun, sigma_t)
     tpts = 1000
@@ -1936,10 +2015,10 @@ def analytic_paper_plots():
     plt.text(-136, .198, f'{tlist1[-4]}' )
     plt.savefig('blast_plots/low_energy_scalar_flux_before.pdf')
     plt.figure(2)
-    plt.text(0.0, .559,f't = {tlist1[-1]} [ns]' )
-    plt.text(-66.2, .280, f'{tlist1[-2]}' )
-    plt.text(0.0, .110 , f'{tlist1[-3]}')
-    plt.text(82.8,  0.032, f'{tlist1[-4]}' )
+    plt.text(0.0, .559,f't = {tlist2[0]} [ns]' )
+    plt.text(-66.2, .280, f'{tlist2[1]}' )
+    plt.text(0.0, .110 , f'{tlist2[2]}')
+    plt.text(82.8,  0.032, f'{tlist2[3]}' )
     plt.savefig('blast_plots/low_energy_scalar_flux_after.pdf')
     plt.close()
     plt.close()
@@ -1958,10 +2037,10 @@ def analytic_paper_plots():
     plt.text(-136, .198, f'{tlist1[-4]}' )
     plt.savefig('blast_plots/low_energy_current_before.pdf')
     plt.figure(2)
-    plt.text(0.0, .359,f't = {tlist1[-1]} [ns]' )
-    plt.text(-66.2, .110, f'{tlist1[-2]}' )
-    plt.text(0.0, .06 , f'{tlist1[-3]}')
-    plt.text(82.8,  0.0052, f'{tlist1[-4]}' )
+    plt.text(0.0, .359,f't = {tlist2[0]} [ns]' )
+    plt.text(-66.2, .110, f'{tlist2[1]}' )
+    plt.text(0.0, .06 , f'{tlist2[2]}')
+    plt.text(82.8,  0.0052, f'{tlist2[3]}' )
     plt.savefig('blast_plots/low_energy_current_after.pdf')
     plt.close()
     plt.close()
