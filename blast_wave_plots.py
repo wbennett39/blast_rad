@@ -55,7 +55,7 @@ def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
         # b2 =  v0 * (-x0/mu - t0 + c1) / (1+v0/mu)
         xfl = v0 * (x0 -mu *t) / (mu + v0)
         xfr = v0 * (x0 -mu *t) / (-mu + v0)
-        print(mu, v0, 'mu, v0')
+
 
 
        
@@ -74,7 +74,8 @@ def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
         print('---')
         mfp = t2(min(x, xfl)) - t2(x0) + t2(max(x, xfr)) - t2(xfr) - t1(xfl) + t1(b1)
         if mfp <0 :
-             raise ValueError('negative mfp')
+             mfp = 0
+            #  raise ValueError('negative mfp')
         # print(x)
         # print(t2(min(x, xfl)))
         # print(t2(x0) )
