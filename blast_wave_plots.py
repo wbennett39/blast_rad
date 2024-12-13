@@ -37,10 +37,13 @@ def opts0(*args, **kwargs):
 
 def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
         c1 = 1.0
+        if mu < 0:
+             raise ValueError('negative mu')
         if mu!= 0:
             t0 =  (x0-x)/mu + tfinal # time the particle is emitted
         else: 
              t0 = np.inf
+             return np.inf   
         x02 = 0.0
         sqrt_pi = math.sqrt(math.pi)
         kappa = 2
@@ -50,8 +53,9 @@ def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
         # beta = c1 * (v0-1) - v0 * (x0/mu + t0)
         
         # b2 =  v0 * (-x0/mu - t0 + c1) / (1+v0/mu)
-        xfr = (mu * t * v0 + v0 * x)/(v0 - mu)
-        xfl = (mu * t * v0 + v0 * x)/(v0 + mu)
+        xfl = v0 * (x0 -mu *t) / (mu + v0)
+        xfr = v0 * (x0 -mu *t) / (-mu + v0)
+        print(mu, v0, 'mu, v0')
 
 
        
@@ -64,8 +68,22 @@ def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
         t1 = lambda s: rho2 * s
         t2 = lambda s: rho0 * s
 
+        b1 = min(xfr, max(x, xfl))
+        print(xfr, 'xfr')
+        print(xfl, 'xfl')
+        print('---')
+        mfp = t2(min(x, xfl)) - t2(x0) + t2(max(x, xfr)) - t2(xfr) - t1(xfl) + t1(b1)
+        if mfp <0 :
+             raise ValueError('negative mfp')
+        # print(x)
+        # print(t2(min(x, xfl)))
+        # print(t2(x0) )
+        # print(t2(max(x, xfr)) )
+        # print(t2(xfr))
+        # print(t1(xfl))
+        # print(t1(b1))
+        print('lambda = ',mfp)
 
-        mfp = t2(min(x, xfl)) - t2(x0) + t2(max(x, xfr)) - t2(xfr) - t1(xfl) + t1(min(xfr, max(x, xfl)))
         if mu == 0:
              return 0.0
         else:
@@ -100,6 +118,8 @@ def square_blast_phi_vector(tfinal, xs, v0, t0, x0):
      return res
      
 def plot_square_blast(t, x0 = -150, v0 = 0.01, t0source = 100, npts = 250):
+     if v0 * t > abs(x0):
+          raise ValueError('blast has passed the source')
      plt.ion()
      xs = np.linspace(-x0,x0, npts)
      phi = square_blast_phi_vector(t, xs, v0, t0source, x0)
