@@ -74,7 +74,6 @@ def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
         # print('---')
         mfp = t2(min(x, xfl)) - t2(x0) + t2(max(x, xfr)) - t2(xfr) - t1(xfl) + t1(b1)
         if mfp <0 :
-             print(mfp)
              mfp = 0
             #  raise ValueError('negative mfp')
         # print(x)
@@ -135,7 +134,7 @@ def plot_square_blast_detector(tf, x0 = -150, v0 = 0.01, t0source = 100, npts = 
      xs = np.array([-x0-0.0000000001])
      ts = np.linspace(0.0001, tf, npts)
      phi = ts * 0
-     print(square_blast_phi_vector(600, xs, v0, t0source, x0)[0])
+
      for it, tt in enumerate(ts):
         if v0 * tt > abs(x0):
           raise ValueError('blast has passed the source')

@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.integrate as integrate
-from blast_wave_plots import TS_bench_prime, TS_bench, TS_current
+from blast_wave_plots import TS_bench_prime, TS_bench, TS_current, square_blast_phi_vector
 from show import show
 import math
 from sedov_uncollided import sedov_uncollided_solutions
@@ -138,7 +138,7 @@ def analytic_profile(tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 1.0, 
          
     current = TS_current(tf, xs, g_interp, v_interp, sedov, beta = beta ,transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = relativistic)
 #  if plotbad == True:
-    plt.figure('scalar flux')
+    plt.figure(1)
     a2.plot(xs/sigma_t, phi_bench, 'k-', mfc = 'none')
     a1.plot(xrho/sigma_t, density_final, 'k-')
     if plotnonrel == True:
@@ -153,51 +153,119 @@ def analytic_profile(tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 1.0, 
     a2.set_xlabel('x [cm]', fontsize = 16)
     a1.set_ylabel(r'$\rho$ [g/cc]', fontsize = 16)
     # a2.ylim(0, 1.1)
-    # show(f'analytic_phi_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}')
+    show(f'blast_plots/analytic_phi_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}')
     plt.show()
-    plt.savefig(f'analytic_phi_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}.pdf')
+    # plt.savefig(f'analytic_phi_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}.pdf')
     
-    # plt.close()
-    f, (a1, a2) = plt.subplots(2,1, gridspec_kw={'height_ratios': [1,  4]})
-    plt.figure('current')
+    plt.close()
+    f, (a3, a4) = plt.subplots(2,1, gridspec_kw={'height_ratios': [1,  4]})
+    plt.figure(2)
     
-    a2.plot(xs/sigma_t, current, 'k-', mfc = 'none')
-    a1.plot(xrho/sigma_t, density_final, 'k-')
+    a4.plot(xs/sigma_t, current, 'k-', mfc = 'none')
+    a3.plot(xrho/sigma_t, density_final, 'k-')
     if plotnonrel == True:
          current_bad = TS_current(tf, xs, g_interp, v_interp, sedov, beta = beta ,transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False)
-         a2.plot(xs/sigma_t, current_bad, 'k--', mfc = 'none')
+         a4.plot(xs/sigma_t, current_bad, 'k--', mfc = 'none')
     
     elif plotbad == True:
         current_nottransformed = TS_current(tf, xs, g_interp, v_interp, sedov, beta = beta, transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False)
-        a2.plot(xs/sigma_t, current_nottransformed, 'k--', mfc = 'none')
+        a4.plot(xs/sigma_t, current_nottransformed, 'k--', mfc = 'none')
          
-    a2.set_ylabel(r'$J$', fontsize = 16)
-    a1.set_ylabel(r'$\rho$ [g/cc]', fontsize = 16)
-    a2.set_xlabel('x [cm]', fontsize = 16)
+    a4.set_ylabel(r'$J$', fontsize = 16)
+    a3.set_ylabel(r'$\rho$ [g/cc]', fontsize = 16)
+    a4.set_xlabel('x [cm]', fontsize = 16)
     # a2.ylim(0, 0.6)
+    
+    show(f'blast_plots/analytic_J_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}')
     plt.show()
-    # show(f'analytic_J_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}')
-    plt.savefig(f'analytic_J_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}.pdf')
+    # plt.savefig(f'analytic_J_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}.pdf')
     
     
-    # plt.close()
+    plt.close()
     # plt.close()
     # plt.close()
 
 def paper_example_plots():
      analytic_profile(tf=0.1, t0 = 1.00000000001)
-     plt.close()
-     plt.close()
+    #  plt.close()
+    #  plt.close()
      analytic_profile(tf=0.16, t0 = 1.00000000001)
-     plt.close()
-     plt.close()
+    #  plt.close()
+    #  plt.close()
      analytic_profile(tf=0.22, t0 = 1.00000000001)
-     plt.close()
-     plt.close()
+    #  plt.close()
+    #  plt.close()
      analytic_profile(tf=1, t0 = 1.00000000001)
-     plt.close()
-     plt.close()
+    #  plt.close()
+    #  plt.close()
      analytic_profile(tf=1.05, t0 = 1.00000000001)
-     plt.close()
-     plt.close()
+    #  plt.close()
+    #  plt.close()
      analytic_profile(tf=1.15, t0 = 1.00000000001)
+
+
+
+def plot_square_blast(t, x0 = -150, v0 = 0.01, t0source = 100, npts = 250):
+     if v0 * t > abs(x0):
+          raise ValueError('blast has passed the source')
+     plt.ion()
+     xs = np.linspace(-x0,x0, npts)
+     phi = square_blast_phi_vector(t, xs, v0, t0source, x0)
+     plt.plot(xs, phi, 'k-')
+     plt.show()
+
+
+def analytic_square(tf = 15.5, sigma_t = 1e-3, x0 = 0.15, v0 = 0.01, t0 = 1000.0, npts = 250):
+    if v0 * tf > abs(x0/sigma_t):
+          raise ValueError('blast has passed the source')
+    plt.ion()
+    rho0 = 1
+    rho2 = 6
+    xs = np.linspace(-x0/sigma_t, x0/sigma_t, npts)
+    phi = square_blast_phi_vector(tf, xs, v0, t0, -x0/sigma_t)
+    xrho = np.linspace(-x0/sigma_t, x0/sigma_t, 5000)
+    def density_func(x):
+         res = x*0
+         for ix, xx in enumerate(x):
+              if abs(xx) < v0 * tf:
+                   res[ix] = rho2
+              else:
+                   res[ix] = rho0
+         return res
+                   
+              
+    density_final = density_func(xrho)
+         
+    
+#  if plotbad == True:
+    f, (a1, a2) = plt.subplots(2,1, gridspec_kw={'height_ratios': [1,  4]})
+    plt.figure(1)
+    a2.plot(xs, phi, 'k-', mfc = 'none')
+    a1.plot(xrho, density_final, 'k-')
+         
+    a2.set_ylabel(r'$\phi$', fontsize = 16)
+    a2.set_xlabel('x [cm]', fontsize = 16)
+    a1.set_ylabel(r'$\rho$ [g/cc]', fontsize = 16)
+    # a2.ylim(0, 1.1)
+    show(f'blast_plots/square_blast_tf={tf}_v0={v0}')
+    plt.show()
+    # plt.savefig(f'analytic_phi_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}.pdf')
+    
+    # plt.close()
+def plot_square_blast_detector(tf, x0 = -150, v0 = 0.01, t0source = 10000, npts = 250):
+    # 
+     plt.ion()
+     xs = np.array([-x0-0.0000000001])
+     ts = np.linspace(0.0001, tf, npts)
+     phi = ts * 0
+
+     for it, tt in enumerate(ts):
+        if v0 * tt > abs(x0):
+          raise ValueError('blast has passed the source')
+        phi[it] = square_blast_phi_vector(tt, xs, v0, t0source, x0)[0]
+     plt.plot(ts/29.98, phi, 'k-')
+     plt.xlabel(r'$\phi$', fontsize = 16)
+     plt.ylabel('t [ns]', fontsize = 16)
+     show(f'blast_plots/square_detector_tf={tf}_v0={v0}')
+     plt.show()
+     plt.close()
