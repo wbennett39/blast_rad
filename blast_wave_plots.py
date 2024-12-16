@@ -41,13 +41,13 @@ def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
              raise ValueError('negative mu')
         if mu!= 0:
             t0 =  (x0-x)/mu + tfinal # time the particle is emitted
-        else: 
+        elif mu == 0.0: 
              t0 = np.inf
              return np.inf   
         x02 = 0.0
         sqrt_pi = math.sqrt(math.pi)
         kappa = 2
-        rho0 = 0.0001
+        rho0 = 0.001
         rho2 = 0.006
         t = tfinal
         # beta = c1 * (v0-1) - v0 * (x0/mu + t0)
@@ -69,11 +69,12 @@ def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
         t2 = lambda s: rho0 * s
 
         b1 = min(xfr, max(x, xfl))
-        print(xfr, 'xfr')
-        print(xfl, 'xfl')
-        print('---')
+        # print(xfr, 'xfr')
+        # print(xfl, 'xfl')
+        # print('---')
         mfp = t2(min(x, xfl)) - t2(x0) + t2(max(x, xfr)) - t2(xfr) - t1(xfl) + t1(b1)
         if mfp <0 :
+             print(mfp)
              mfp = 0
             #  raise ValueError('negative mfp')
         # print(x)
@@ -83,13 +84,13 @@ def square_blast_psi(mu, tfinal, x, v0, t0source, x0):
         # print(t2(xfr))
         # print(t1(xfl))
         # print(t1(b1))
-        print('lambda = ',mfp)
+        # print('lambda = ',mfp)
 
         if mu == 0:
              return 0.0
         else:
-            if mfp/mu >40:
-                mfp = 40 * mu
+            if mfp/mu >42:
+                mfp = 42 * mu
                 # print(np.exp(-mfp/mu))
                 return 0.0
                 # mfp = rho0 * x - rho0 * (-x0)
@@ -128,7 +129,19 @@ def plot_square_blast(t, x0 = -150, v0 = 0.01, t0source = 100, npts = 250):
      plt.show()
      
      
-
+def plot_square_blast_detector(tf, x0 = -150, v0 = 0.01, t0source = 100, npts = 250):
+    # 
+     plt.ion()
+     xs = np.array([-x0-0.0000000001])
+     ts = np.linspace(0.0001, tf, npts)
+     phi = ts * 0
+     print(square_blast_phi_vector(600, xs, v0, t0source, x0)[0])
+     for it, tt in enumerate(ts):
+        if v0 * tt > abs(x0):
+          raise ValueError('blast has passed the source')
+        phi[it] = square_blast_phi_vector(tt, xs, v0, t0source, x0)[0]
+     plt.plot(ts, phi, 'k-')
+     plt.show()
 
 
 
@@ -562,7 +575,7 @@ def error_TS_blast_wave_absorbing(N_space=16, M=6, x0 = 0.5, t0 = 15.0, sigma_t 
 def analytic_profile(tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 0.5, eblast = 1e20, plotnonrel = False, plotbad = False, relativistic = True, tstar = 1e-12, npts = 250):
     g_interp, v_interp, sedov = TS_bench_prime(sigma_t, eblast, tstar)
     plt.ion()
-    
+    f, (a1, a2) = plt.subplots(2,1, gridspec_kw={'height_ratios': [1,  4]})
     xs = np.linspace(-x0, x0, npts)
     phi_bench = TS_bench(tf, xs, g_interp, v_interp, sedov, beta = beta, transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = relativistic)
          

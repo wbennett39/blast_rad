@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.integrate as integrate
-from blast_wave_plots import TS_bench_prime
+from blast_wave_plots import TS_bench_prime, TS_bench, TS_current
+from show import show
 import math
 from sedov_uncollided import sedov_uncollided_solutions
 from sedov_funcs import sedov_class
@@ -126,3 +127,55 @@ def check_lambda(t=2, x0=0.15, E0=1e20, beta = 2.6, sigma_t = 1e-3):
     plt.plot(mulist, lambdalist, 'k:')
     plt.show()
 
+def analytic_profile(tf = 5.5, sigma_t = 1e-3, x0 = 0.15, beta = 2.7, t0 = 0.5, eblast = 1e20, plotnonrel = False, plotbad = False, relativistic = True, tstar = 1e-12, npts = 250):
+    g_interp, v_interp, sedov = TS_bench_prime(sigma_t, eblast, tstar)
+    plt.ion()
+    f, (a1, a2) = plt.subplots(2,1, gridspec_kw={'height_ratios': [1,  4]})
+    xs = np.linspace(-x0, x0, npts)
+    phi_bench = TS_bench(tf, xs, g_interp, v_interp, sedov, beta = beta, transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = relativistic)
+    xrho = np.linspace(-x0, x0, 5000)
+    density_final = sedov.interpolate_self_similar(tf, xrho, g_interp)
+         
+    current = TS_current(tf, xs, g_interp, v_interp, sedov, beta = beta ,transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = relativistic)
+#  if plotbad == True:
+    plt.figure('scalar flux')
+    a2.plot(xs/sigma_t, phi_bench, 'k-', mfc = 'none')
+    a1.plot(xs/sigma_t, density_final)
+    if plotnonrel == True:
+         phi_bench_bad = TS_bench(tf, xs, g_interp, v_interp, sedov,beta = beta, transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False )
+         a2.plot(xs/sigma_t, phi_bench_bad, 'k--', mfc = 'none')
+    
+    elif plotbad == True:
+        phi_bench_nottransformed = TS_bench(tf, xs, g_interp, v_interp, sedov,beta = beta, transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False )
+        a2.plot(xs/sigma_t, phi_bench_nottransformed, 'k--', mfc = 'none')
+         
+    a2.set_ylabel(r'$\phi$', fontsize = 16)
+    a2.set_xlabel('x [cm]', fontsize = 16)
+    a1.set_ylabel(r'$\rho$ [g/cc]', fontsize = 16)
+    # a2.ylim(0, 1.1)
+    # show(f'analytic_phi_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}')
+    plt.savefig(f'analytic_J_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}.pdf')
+    plt.show()
+    plt.close()
+    f, (a1, a2) = plt.subplots(2,1, gridspec_kw={'height_ratios': [1,  4]})
+    plt.figure('current')
+    
+    a2.plot(xs/sigma_t, current, 'k-', mfc = 'none')
+    a1.plot(xs/sigma_t, density_final)
+    if plotnonrel == True:
+         current_bad = TS_current(tf, xs, g_interp, v_interp, sedov, beta = beta ,transform=True, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False)
+         a2.plot(xs/sigma_t, current_bad, 'k--', mfc = 'none')
+    
+    elif plotbad == True:
+        current_nottransformed = TS_current(tf, xs, g_interp, v_interp, sedov, beta = beta, transform=False, x0 = x0, t0 = t0, sigma_t = sigma_t, relativistic = False)
+        a2.plot(xs/sigma_t, current_nottransformed, 'k--', mfc = 'none')
+         
+    a2.set_ylabel(r'$J$', fontsize = 16)
+    a1.set_ylabel(r'$\rho$ [g/cc]', fontsize = 16)
+    a2.set_xlabel('x [cm]', fontsize = 16)
+    # a2.ylim(0, 0.6)
+    # show(f'analytic_J_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}')
+    plt.savefig(f'analytic_J_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}.pdf')
+    
+    plt.show()
+    plt.close()
