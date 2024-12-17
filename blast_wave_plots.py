@@ -114,10 +114,25 @@ def square_blast_phi_vector(tfinal, xs, v0, t0, x0):
             bb = min(1.0, abs(x-x0)/ (tfinal - t0))
         aa = abs(x-x0) / tfinal
 
+
         if aa <= 1.0:     
             res[ix] = integrate.nquad(square_blast_psi, [[aa, bb]], args = (tfinal, x, v0, t0, x0), opts = [opts0])[0]
      return res
-     
+    
+
+def square_blast_J_vector(tfinal, xs, v0, t0, x0):
+     res = xs*0
+     for ix, x in enumerate(xs):
+        aa = 0.0
+        bb = 1.0
+        if tfinal > t0:
+            bb = min(1.0, abs(x-x0)/ (tfinal - t0))
+        aa = abs(x-x0) / tfinal
+        
+        first = lambda mu: square_blast_psi(mu, tfinal, x, v0, t0, x0) * mu
+        if aa <= 1.0:     
+            res[ix] = integrate.nquad(first, [[aa, bb]], opts = [opts0])[0]
+     return res
 def plot_square_blast(t, x0 = -150, v0 = 0.01, t0source = 100, npts = 250):
      if v0 * t > abs(x0):
           raise ValueError('blast has passed the source')

@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.integrate as integrate
-from blast_wave_plots import TS_bench_prime, TS_bench, TS_current, square_blast_phi_vector
+from blast_wave_plots import TS_bench_prime, TS_bench, TS_current, square_blast_phi_vector, square_blast_J_vector
 from show import show
 import math
 from sedov_uncollided import sedov_uncollided_solutions
@@ -258,14 +258,23 @@ def plot_square_blast_detector(tf, x0 = -150, v0 = 0.01, t0source = 10000, npts 
      xs = np.array([-x0-0.0000000001])
      ts = np.linspace(0.0001, tf, npts)
      phi = ts * 0
+     J = ts * 0
 
      for it, tt in enumerate(ts):
         if v0 * tt > abs(x0):
           raise ValueError('blast has passed the source')
         phi[it] = square_blast_phi_vector(tt, xs, v0, t0source, x0)[0]
+        J[it] = square_blast_J_vector(tt, xs, v0, t0source, x0)[0]
      plt.plot(ts/29.98, phi, 'k-')
-     plt.xlabel(r'$\phi$', fontsize = 16)
-     plt.ylabel('t [ns]', fontsize = 16)
+     plt.ylabel(r'$\phi$', fontsize = 16)
+     plt.xlabel('t [ns]', fontsize = 16)
      show(f'blast_plots/square_detector_tf={tf}_v0={v0}')
+     plt.show()
+     plt.close()
+
+     plt.plot(ts/29.98, J, 'k-')
+     plt.ylabel(r'$J$', fontsize = 16)
+     plt.xlabel('t [ns]', fontsize = 16)
+     show(f'blast_plots/square_detector_J_tf={tf}_v0={v0}')
      plt.show()
      plt.close()
