@@ -10,6 +10,7 @@ import quadpy
 from functions import get_sedov_funcs
 from cubic_spline import cubic_spline_ob as cubic_spline
 import matplotlib.pyplot as plt
+from scipy.special import gammainc
 
 def TS_bench_prime(sigma_t = 1e-3, eblast = 1e20, tstar = 1e-12):
     f_fun, g_fun, l_fun = get_sedov_funcs()
@@ -235,18 +236,26 @@ def analytic_square(tf = 15.5, sigma_t = 1e-3, x0 = 0.15, v0 = 0.01, t0 = 1000.0
                    
               
     density_final = density_func(xrho)
+    Jq = xs * 0
+    phiq = xs* 0
+    for ix, xx in enumerate(xs):
+        res = quiescent_gas(xx, tf, t0, sigma_t, x0/sigma_t)
+        phiq[ix] = res[0]
+        Jq[ix] = res[1]
+    print(phiq)
          
     
 #  if plotbad == True:
     f, (a1, a2) = plt.subplots(2,1, gridspec_kw={'height_ratios': [1,  4]})
     plt.figure(1)
     a2.plot(xs, phi, 'k-', mfc = 'none')
+    a2.plot(xs, phiq, 'b:')
     a1.plot(xrho, density_final, 'k-')
          
     a2.set_ylabel(r'$\phi$', fontsize = 16)
     a2.set_xlabel('x [cm]', fontsize = 16)
     a1.set_ylabel(r'$\rho$ [g/cc]', fontsize = 16)
-    # a2.ylim(0, 1.1)
+    a2.set_ylim(0, 1.1)
     show(f'blast_plots/square_blast_tf={tf}_v0={v0}')
     plt.show()
     # plt.savefig(f'analytic_phi_t={tf}_E0={eblast}_beta={beta}_x0={x0/sigma_t}_t0={t0}.pdf')
@@ -278,3 +287,26 @@ def plot_square_blast_detector(tf, x0 = -150, v0 = 0.01, t0source = 10000, npts 
      show(f'blast_plots/square_detector_J_tf={tf}_v0={v0}')
      plt.show()
      plt.close()
+
+
+def quiescent_gas(x, tfinal, t0source, sigma, x0):
+    bb = max(1,min(1.0, abs(x+x0)/ (tfinal - t0source)))
+    x += 1e-10
+    # bb =1
+    # x0 = -x0
+    aa = min(1,abs(x+x0) / tfinal)
+    
+
+
+    # print(aa, bb)
+    phi = lambda mu: (-2 + ((x + x0)*sigma*(-2 - ((x + x0)*sigma)/mu))/mu)/(np.exp(((x + x0)*sigma)/mu)*(x + x0 + 1e-8)**3*sigma**3)
+      
+    J = lambda mu: (-1 - ((x + x0)*sigma)/mu)/(np.exp(((x + x0)*sigma)/mu)*(x + x0 + 1e-8)**2*sigma**2)
+    phisol = 0
+    Jsol = 0
+    if aa < 1.0 and x > x0:
+        phisol = phi(bb) - phi(aa)
+        print(phisol)
+        Jsol = J(bb) - J(aa)
+    phisol = -(aa/math.exp(((x + x0)*sigma)/aa)) + bb/math.exp(((x + x0)*sigma)/bb) + (x + x0)*sigma*(gammainc(0,((x + x0)*sigma)/aa) - gammainc(0,((x + x0)*sigma)/bb))
+    return phisol, Jsol 
